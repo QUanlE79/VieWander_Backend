@@ -16,7 +16,13 @@ const Province = new Schema({
     },
     rating: {
         type: Number
-    }
+    },
+    area:{
+        type: String
+    },
+    num_traveler:{
+        type: Number
+    },
 });
 let provinceModel = mongoose.model('provinces', Province,"provinces");
 export default provinceModel

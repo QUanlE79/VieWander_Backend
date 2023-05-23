@@ -28,6 +28,18 @@ const Landmark = new Schema({
     },
     rating: {
         type: Number
+    },
+    entrance_fee:{
+        type: Boolean
+    },
+    open_time:{
+        type: String
+    },
+    contact:{
+        type:String
+    },
+    website:{
+        type:String
     }
 });
 let landmarkModel = mongoose.model('landmarks', Landmark,"landmarks");

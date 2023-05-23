@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const Comments = new Schema({
-    landmark_id:{
+    province_id:{
         type:String,
         required: true
     },
@@ -20,5 +20,5 @@ const Comments = new Schema({
         type: Number
     }
 });
-let commentModel = mongoose.model('comments_detail', Comments,"comments_detail");
+let commentModel = mongoose.model('comments_province', Comments,"comments_province");
 export default commentModel
