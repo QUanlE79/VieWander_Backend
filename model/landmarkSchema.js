@@ -9,8 +9,8 @@ const Landmark = new Schema({
     name: {type: String,              
         required: true, 
     },
-    type: {
-        type: String
+    type: { //0: DLTC; 1: DTLS
+        type: Number
     },
     address: {
         type: String,
