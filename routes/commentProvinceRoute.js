@@ -1,4 +1,4 @@
-import commentModel from "../model/comment_provinceSchema";
+import commentModel from "../model/comment_provinceSchema.js";
 import express from 'express'
 
 const Router = express.Router();

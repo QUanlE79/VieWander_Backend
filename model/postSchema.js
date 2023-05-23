@@ -10,7 +10,8 @@ const Post = new Schema({
         type: String
     },
     date_post:{
-        type: Long
+        type: Number,
+        default: Date.now()
     },
     num_of_like:{
         type: Number

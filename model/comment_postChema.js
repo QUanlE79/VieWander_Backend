@@ -14,7 +14,8 @@ const Comments = new Schema({
         type: String
     },
     date_post:{
-        type: Number
+        type: Number,
+        default: Date.now()
     }
 });
 let CommentModel = mongoose.model('comments_post', Comments,"comments_post");

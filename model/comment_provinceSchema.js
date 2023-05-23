@@ -14,7 +14,8 @@ const Comments = new Schema({
         type: String
     },
     date_post:{
-        type: Number
+        type: Number,
+        default: Date.now()
     },
     rating:{
         type: Number
