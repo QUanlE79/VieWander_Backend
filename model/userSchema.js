@@ -2,6 +2,16 @@ import mongoose from 'mongoose';
 const { Schema } = mongoose;
 
 const User = new Schema({
+    email: {
+        type: String,
+        required : true
+    },
+    password: {
+        type: String,
+    },
+    socialID: {
+        type: String,
+    },
     name: {
         type: String,              
         required: true, 
@@ -35,6 +45,9 @@ const User = new Schema({
     },
     follow:{
         type: [String]
+    },
+    role:{
+        type: Number
     }
 });
 let userModel = mongoose.model('users', User,"users");
