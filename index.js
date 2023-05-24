@@ -1,5 +1,5 @@
 import _ from "./config/conf.js"
-import  express  from "express";
+import express from "express";
 import morgan from "morgan";
 import mongoose from "mongoose";
 import authRoute from "./routes/authRoute.js"
@@ -10,17 +10,22 @@ import postRoute from "./routes/postRoute.js"
 import commentProvinceRoute from "./routes/commentProvinceRoute.js"
 import commentDetailRoute from "./routes/commentDetailRoute.js"
 import commentPostRoute from "./routes/commentPostRoute.js"
+import bodyParser from 'body-parser';
+import cors from 'cors'
 const app = express()
 
-try{
-  await mongoose.connect(process.env.DB_CONNECTION_STR, {useUnifiedTopology: true, useNewUrlParser: true})
+try {
+  await mongoose.connect(process.env.DB_CONNECTION_STR, { useUnifiedTopology: true, useNewUrlParser: true })
   console.log("Database connected...")
-}catch(e){
+} catch (e) {
   console.log("Error connected database")
   console.log(e)
   process.exit(-1)
 }
 app.use(morgan('dev'))
+app.use(bodyParser.json({ limit: '30mb', extended: true }))
+app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
+app.use(cors())
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
@@ -28,7 +33,7 @@ app.use('/auth', authRoute)
 app.use('/profile', profileRoute)
 app.use('/province', provinceRoute)
 app.use('/landmark', landmarkRoute)
-app.use('/post',postRoute)
+app.use('/post', postRoute)
 app.use('/comment-province', commentProvinceRoute)
 app.use('/comment-landmark', commentDetailRoute)
 app.use('/comment-post', commentPostRoute)

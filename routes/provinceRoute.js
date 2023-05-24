@@ -4,15 +4,15 @@ import express from 'express'
 
 const Router = express.Router();
 
-Router.get("/count",async (req,res)=>{
-    try{
+Router.get("/count", async (req, res) => {
+    try {
         const result = await provinceModel.count({}).exec()
         res.json({
             code: "200",
             message: "OK",
             data: result
         });
-    }catch(er){
+    } catch (er) {
         console.log(er)
         res.json({
             code: "400",
@@ -22,50 +22,50 @@ Router.get("/count",async (req,res)=>{
 })
 Router.get("/", async (req, res) => {
     try {
-      const result = await provinceModel.find({}).exec();
-      res.json({
-        code: "200",
-        message: "OK",
-        data: result
-      });
+        const result = await provinceModel.find({}, `_id name`).exec();
+        res.json({
+            code: "200",
+            message: "OK",
+            data: result
+        });
     } catch (error) {
-      console.log(error);
-      res.json({
-        code: "404",
-        message: "NOT FOUND"
-      });
+        console.log(error);
+        res.json({
+            code: "404",
+            message: "NOT FOUND"
+        });
     }
 });
 
 Router.get("/:id", async (req, res) => {
     try {
-      const result = await provinceModel.find({_id: req.params.id}).exec();
-      const count = await landmarkModel.countDocuments({ province_id: req.params.id }).exec();
-      const updatedResult = [...result, { totalLandmark: count }];
-      result.add({totalLandmark: count})
-      res.json({
-        code: "200",
-        message: "OK",
-        data: updatedResult
-      });
+        const result = await provinceModel.find({ _id: req.params.id }).exec();
+        const count = await landmarkModel.countDocuments({ province_id: req.params.id }).exec();
+        const updatedResult = [...result, { totalLandmark: count }];
+        result.add({ totalLandmark: count })
+        res.json({
+            code: "200",
+            message: "OK",
+            data: updatedResult
+        });
     } catch (error) {
-      console.log(error);
-      res.json({
-        code: "404",
-        message: "NOT FOUND"
-      });
+        console.log(error);
+        res.json({
+            code: "404",
+            message: "NOT FOUND"
+        });
     }
 });
-Router.post("/create",async (req,res)=>{
-    try{
-        const province = new provinceModel(req.body)      
+Router.post("/create", async (req, res) => {
+    try {
+        const province = new provinceModel(req.body)
         const result = await province.save()
         res.json({
             code: "200",
             message: "OK",
             data: result
         });
-    }catch(ex){
+    } catch (ex) {
         console.log(ex);
         res.json({
             code: "400",
@@ -73,8 +73,8 @@ Router.post("/create",async (req,res)=>{
         });
     }
 })
-Router.post("/update",async (req,res, next)=>{ //...?id=
-    try{
+Router.post("/update", async (req, res, next) => { //...?id=
+    try {
         const id = req.query.id;
         const province = await provinceModel.findById(id);
         if (!province) {
@@ -91,7 +91,7 @@ Router.post("/update",async (req,res, next)=>{ //...?id=
             message: "OK",
             data: result
         });
-    }catch(ex){
+    } catch (ex) {
         console.log(ex);
         res.json({
             code: "400",
@@ -99,8 +99,8 @@ Router.post("/update",async (req,res, next)=>{ //...?id=
         });
     }
 })
-Router.post("/delete",async (req,res)=>{
-    try{
+Router.post("/delete", async (req, res) => {
+    try {
         const id = req.query.id;
         const delProvince = await provinceModel.findOneAndDelete({ _id: id });
         if (!delProvince) {
@@ -115,7 +115,7 @@ Router.post("/delete",async (req,res)=>{
             message: "OK",
             data: delProvince
         });
-    }catch(ex){
+    } catch (ex) {
         console.log(ex);
         res.json({
             code: "400",
