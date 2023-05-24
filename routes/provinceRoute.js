@@ -4,7 +4,7 @@ import express from 'express'
 
 const Router = express.Router();
 
-Router.get("/total",async (req,res)=>{
+Router.get("/count",async (req,res)=>{
     try{
         const result = await provinceModel.count({}).exec()
         res.json({
@@ -56,7 +56,7 @@ Router.get("/:id", async (req, res) => {
       });
     }
 });
-Router.post("/add",async (req,res)=>{
+Router.post("/create",async (req,res)=>{
     try{
         const province = new provinceModel(req.body)      
         const result = await province.save()
@@ -73,7 +73,7 @@ Router.post("/add",async (req,res)=>{
         });
     }
 })
-Router.post("/edit",async (req,res, next)=>{ //...?id=
+Router.post("/update",async (req,res, next)=>{ //...?id=
     try{
         const id = req.query.id;
         const province = await provinceModel.findById(id);

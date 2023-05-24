@@ -3,7 +3,7 @@ import express from 'express'
 
 const Router = express.Router();
 
-Router.get("/total",async (req,res)=>{
+Router.get("/count",async (req,res)=>{
     try{
         const result = await commentModel.count({}).exec()
         res.json({
@@ -38,7 +38,7 @@ Router.get("/:id", async (req, res) => {
     }
 });
 
-Router.post("/add", async(req, res)=>{
+Router.post("/create", async(req, res)=>{
     const newComment = new commentModel(req.body)
     try{
         const savedComment = await newComment.save()

@@ -3,7 +3,7 @@ import express from 'express'
 
 const Router = express.Router();
 
-Router.get("/total",async (req,res)=>{
+Router.get("/count",async (req,res)=>{
     try{
         const result = await landmarkModel.count({}).exec()
         res.json({
@@ -52,7 +52,7 @@ Router.get("/:id", async (req, res) => {
       });
     }
 });
-Router.post("/add",async (req,res)=>{
+Router.post("/create",async (req,res)=>{
     try{
         const landmark = new landmarkModel(req.body)      
         const result = await landmark.save()
@@ -69,7 +69,7 @@ Router.post("/add",async (req,res)=>{
         });
     }
 })
-Router.post("/edit",async (req,res, next)=>{ //...?id=
+Router.post("/update",async (req,res, next)=>{ //...?id=
     try{
         const id = req.query.id;
         const landmark = await landmarkModel.findById(id);
