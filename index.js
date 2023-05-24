@@ -10,6 +10,7 @@ import postRoute from "./routes/postRoute.js"
 import commentProvinceRoute from "./routes/commentProvinceRoute.js"
 import commentDetailRoute from "./routes/commentDetailRoute.js"
 import commentPostRoute from "./routes/commentPostRoute.js"
+import tripRoute from "./routes/tripRoute.js"
 import bodyParser from 'body-parser';
 import cors from 'cors'
 const app = express()
@@ -39,7 +40,15 @@ app.use('/post', postRoute)
 app.use('/comment-province', commentProvinceRoute)
 app.use('/comment-landmark', commentDetailRoute)
 app.use('/comment-post', commentPostRoute)
+app.use('/trip', tripRoute)
 
+app.use((req,res)=>{
+  res.json({
+    status: 404,
+    message: "Not found",
+    data: null
+  })
+})
 app.listen(process.env.PORT, () => {
   console.log(`VieWander backend http://127.0.0.1:${process.env.PORT}`)
 })
