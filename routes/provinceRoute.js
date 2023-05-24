@@ -1,7 +1,7 @@
 import landmarkModel from "../model/landmarkSchema.js";
 import provinceModel from "../model/provincesSchema.js";
 import express from 'express'
-
+import multer from 'multer'
 const Router = express.Router();
 
 Router.get("/count", async (req, res) => {
@@ -56,9 +56,42 @@ Router.get("/:id", async (req, res) => {
         });
     }
 });
-Router.post("/create", async (req, res) => {
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "public/images/provinces")
+    },
+    filename: (req, file, cb) => {
+
+        cb(null, req.body.name)
+    }
+})
+const upload = multer({ storage: storage })
+Router.post("/create", upload.fields('images'), async (req, res) => {
     try {
-        const province = new provinceModel(req.body)
+        const { images } = req.body
+        console.log(req.body)
+        console.log(req.files.images)
+
+
+        const imageList = []
+        images.forEach(image => {
+            let fileType = image.mimetype.split("/")[1];
+            let imgName = Date.now() + "." + fileType;
+            imageList.push(imgName)
+            fs.rename(
+                `./public/images/provinces/${image.filename}`,
+                `./public/images/provinces/${imgName}`,
+                function (err) {
+                    if (err) {
+                        console.error(err);
+                        return res.status(500).send("Error uploading file");
+                    }
+                }
+            );
+        })
+
+        const province = new provinceModel({ ...req.body, images: imageList })
+
         const result = await province.save()
         res.json({
             code: "200",

@@ -25,6 +25,8 @@ try {
 app.use(morgan('dev'))
 app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
+app.use(express.static('public'))
+app.use('/images', express.static('images'))
 app.use(cors())
 app.get('/', (req, res) => {
   res.send('Hello World!')
