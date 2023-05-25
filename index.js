@@ -13,6 +13,7 @@ import commentPostRoute from "./routes/commentPostRoute.js"
 import tripRoute from "./routes/tripRoute.js"
 import bodyParser from 'body-parser';
 import cors from 'cors'
+import jwt from 'jsonwebtoken'
 const app = express()
 
 try {
@@ -29,9 +30,21 @@ app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 app.use(express.static('public'))
 app.use('/images', express.static('images'))
 app.use(cors())
+
+app.use((req,res,next)=>{
+  const token = req.headers['authorization'];
+  jwt.verify(token, 'etwda2023', function(err, decoded) {
+    if(!err){
+      console.log(`Logged as ${decoded.email}`)
+      res.locals.auth = decoded
+    }
+  });
+  next()
+})
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
+
 app.use('/auth', authRoute)
 app.use('/profile', profileRoute)
 app.use('/province', provinceRoute)
