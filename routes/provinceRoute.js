@@ -38,6 +38,24 @@ Router.get("/", async (req, res) => {
         });
     }
 });
+Router.post('/search', async (req, res) => {
+    const { search } = req.body;
+    try {
+        const regex = new RegExp(search, 'i');
+        const result = await provinceModel.find({ name: regex }).exec();
+        res.json({
+            code: "200",
+            message: "OK",
+            data: result
+        });
+    } catch (error) {
+        console.log(error);
+        res.json({
+            code: "404",
+            message: "NOT FOUND"
+        });
+    }
+});
 
 Router.get("/:id", async (req, res) => {
     try {
