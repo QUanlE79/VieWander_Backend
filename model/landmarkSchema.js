@@ -30,7 +30,7 @@ const Landmark = new Schema({
         type: Number
     },
     entrance_fee:{
-        type: Boolean
+        type: String
     },
     open_time:{
         type: String
@@ -38,7 +38,7 @@ const Landmark = new Schema({
     close_time:{
         type: String
     },
-    contact:{
+    phone:{
         type:String
     },
     website:{

@@ -1,6 +1,8 @@
 import landmarkModel from "../model/landmarkSchema.js";
 import express from 'express'
-
+import multer from 'multer'
+import path from 'path'
+import fs from 'fs'
 const Router = express.Router();
 
 Router.get("/count",async (req,res)=>{
@@ -21,7 +23,7 @@ Router.get("/count",async (req,res)=>{
 })
 Router.get("/", async (req, res) => {
     try {
-      const result = await landmarkModel.find({}).exec();
+      const result = await landmarkModel.find({},`_id name`).exec();
       res.json({
         code: "200",
         message: "OK",
@@ -35,7 +37,24 @@ Router.get("/", async (req, res) => {
       });
     }
 });
-
+Router.post('/search', async (req, res) => {
+    const { search } = req.body;
+    try {
+        const regex = new RegExp(search, 'i');
+        const result = await landmarkModel.find({ name: regex }).exec();
+        res.json({
+            code: "200",
+            message: "OK",
+            data: result
+        });
+    } catch (error) {
+        console.log(error);
+        res.json({
+            code: "404",
+            message: "NOT FOUND"
+        });
+    }
+});
 Router.get("/:id", async (req, res) => {
     try {
       const result = await landmarkModel.find({_id: req.params.id}).exec();
@@ -52,16 +71,33 @@ Router.get("/:id", async (req, res) => {
       });
     }
 });
-Router.post("/create",async (req,res)=>{
-    try{
-        const landmark = new landmarkModel(req.body)      
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "public/images/landmarks")
+    },
+})
+const upload = multer({ storage: storage })
+Router.post("/create",upload.any('images'),async (req,res)=>{
+    try {
+        const imageList = []
+        req.files.forEach(async (image, index) => {
+            let fileType = image.mimetype.split("/")[1];
+            let imgName = req.body.name.trim() + index + "." + fileType;
+            imageList.push(imgName)
+            await fs.renameSync(
+                `./public/images/landmarks/${image.filename}`,
+                `./public/images/landmarks/${imgName}`,
+            );
+        })
+
+        const landmark = new landmarkModel({ ...req.body, images: imageList })
         const result = await landmark.save()
         res.json({
             code: "200",
             message: "OK",
             data: result
         });
-    }catch(ex){
+    } catch (ex) {
         console.log(ex);
         res.json({
             code: "400",
