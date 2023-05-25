@@ -35,6 +35,9 @@ const Landmark = new Schema({
     open_time:{
         type: String
     },
+    close_time:{
+        type: String
+    },
     contact:{
         type:String
     },
