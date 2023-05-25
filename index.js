@@ -35,7 +35,7 @@ app.use((req,res,next)=>{
   const token = req.headers['authorization'];
   jwt.verify(token, 'etwda2023', function(err, decoded) {
     if(!err){
-      console.log(`Loged as ${decoded.email}`)
+      console.log(`Logged as ${decoded.email}`)
       res.locals.auth = decoded
     }
   });

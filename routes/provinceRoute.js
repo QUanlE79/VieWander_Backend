@@ -73,7 +73,7 @@ Router.post("/create", upload.any('images'), async (req, res) => {
         const imageList = []
         req.files.forEach(async (image, index) => {
             let fileType = image.mimetype.split("/")[1];
-            let imgName = req.body.name + index + "." + fileType;
+            let imgName = req.body.name.trim() + index + "." + fileType;
             imageList.push(imgName)
             await fs.renameSync(
                 `./public/images/provinces/${image.filename}`,
