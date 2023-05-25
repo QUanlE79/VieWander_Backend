@@ -38,17 +38,38 @@ Router.get("/", async (req, res) => {
         });
     }
 });
-
-Router.get("/:id", async (req, res) => {
+Router.post('/search', async (req, res) => {
+    const { search } = req.body;
     try {
-        const result = await provinceModel.find({ _id: req.params.id }).exec();
-        const count = await landmarkModel.countDocuments({ province_id: req.params.id }).exec();
-        const updatedResult = [...result, { totalLandmark: count }];
-        result.add({ totalLandmark: count })
+        const regex = new RegExp(search, 'i');
+        const result = await provinceModel.find({ name: regex }).exec();
         res.json({
             code: "200",
             message: "OK",
-            data: updatedResult
+            data: result
+        });
+    } catch (error) {
+        console.log(error);
+        res.json({
+            code: "404",
+            message: "NOT FOUND"
+        });
+    }
+});
+
+Router.get("/:id", async (req, res) => {
+    try {
+        const result = await provinceModel.findOne({ _id: req.params.id }).exec();
+
+        const count = await landmarkModel.countDocuments({ province_id: req.params.id }).exec();
+
+        // const updatedResult = [...result, { totalLandmark: count }];
+        const resultUpdated = { ...result._doc, totalLandmark: count }
+        // result.add({ totalLandmark: count })
+        res.json({
+            code: "200",
+            message: "OK",
+            data: resultUpdated
         });
     } catch (error) {
         console.log(error);
@@ -73,7 +94,7 @@ Router.post("/create", upload.any('images'), async (req, res) => {
         const imageList = []
         req.files.forEach(async (image, index) => {
             let fileType = image.mimetype.split("/")[1];
-            let imgName = req.body.name + index + "." + fileType;
+            let imgName = req.body.name.trim() + index + "." + fileType;
             imageList.push(imgName)
             await fs.renameSync(
                 `./public/images/provinces/${image.filename}`,
