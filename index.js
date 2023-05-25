@@ -27,14 +27,13 @@ try {
 app.use(morgan('dev'))
 app.use(bodyParser.json({ limit: '30mb', extended: true }))
 app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
-app.use(express.static('public'))
-app.use('/images', express.static('images'))
+app.use("/public", express.static("public"));
 app.use(cors())
 
-app.use((req,res,next)=>{
+app.use((req, res, next) => {
   const token = req.headers['authorization'];
-  jwt.verify(token, 'etwda2023', function(err, decoded) {
-    if(!err){
+  jwt.verify(token, 'etwda2023', function (err, decoded) {
+    if (!err) {
       console.log(`Logged as ${decoded.email}`)
       res.locals.auth = decoded
     }
@@ -55,7 +54,7 @@ app.use('/comment-landmark', commentDetailRoute)
 app.use('/comment-post', commentPostRoute)
 app.use('/trip', tripRoute)
 
-app.use((req,res)=>{
+app.use((req, res) => {
   res.json({
     status: 404,
     message: "Not found",
