@@ -30,13 +30,13 @@ Router.post('/login', async (req, res) => {
         if (user) {
             const validity = await bcrypt.compare(password, user.password)
             if (!validity) {
-                res.status(400).json("Wrong password")
+                res.status(400).json({ message: "Wrong password" })
             } else {
                 const token = jwt.sign({ email: user.email, id: user._id }, 'etwda2023', { expiresIn: '1h' })
                 res.status(200).json({ user, token })
             }
         } else {
-            res.status(404).json("User doesnot exists")
+            res.status(404).json({ message: "User doesnot exists" })
         }
     } catch (error) {
         res.status(500).json({ message: error.message })
