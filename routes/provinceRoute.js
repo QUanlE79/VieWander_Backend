@@ -59,14 +59,17 @@ Router.post('/search', async (req, res) => {
 
 Router.get("/:id", async (req, res) => {
     try {
-        const result = await provinceModel.find({ _id: req.params.id }).exec();
+        const result = await provinceModel.findOne({ _id: req.params.id }).exec();
+
         const count = await landmarkModel.countDocuments({ province_id: req.params.id }).exec();
-        const updatedResult = [...result, { totalLandmark: count }];
-        result.add({ totalLandmark: count })
+
+        // const updatedResult = [...result, { totalLandmark: count }];
+        const resultUpdated = { ...result._doc, totalLandmark: count }
+        // result.add({ totalLandmark: count })
         res.json({
             code: "200",
             message: "OK",
-            data: updatedResult
+            data: resultUpdated
         });
     } catch (error) {
         console.log(error);
