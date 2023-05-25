@@ -12,7 +12,7 @@ Router.get("/",async (req,res)=>{
     }
     let startLoc = removeCityPrefix(req.query.start)
     let endLoc = removeCityPrefix(req.query.end)
-    const response = await axios.get(`https://www.mapquestapi.com/directions/v2/route?key=${mapQuestKey}&from=${startLoc}&to=${endLoc}&unit=k`)
+    const response = await axios.get(`https://www.mapquestapi.com/directions/v2/route?key=${mapQuestKey}&from=${startLoc}&to=${endLoc}&unit=k&disallows=Country+Border+Crossing`)
     const route = response.data
     if(!route || route.info.statuscode != 0){
       return res.json({
@@ -21,22 +21,33 @@ Router.get("/",async (req,res)=>{
         data: null
       })
     }
-    let cityRoute = []
+    let cityRoute = new Set()
     let queries = splitLocationsToQueryString(route.route.legs[0].maneuvers)
     for(let query of queries){
       const cityResponse = await axios.get(`https://www.mapquestapi.com/geocoding/v1/batch?key=${mapQuestKey}${query}`)
       const cityList = cityResponse.data.results
       for(let city of cityList){
         let cityName = city.locations[0].adminArea4
-        if(cityRoute.indexOf(cityName)<0)
-          cityRoute.push(cityName)
+        if(city.locations[0].adminArea1 != "VN")
+          continue
+        if(!cityRoute.has(JSON.stringify({
+          _id: "abcd",
+          label: cityName,
+          image: "image"
+        })))
+          cityRoute.add(JSON.stringify({
+            _id: "abcd",
+            label: cityName,
+            image: "image"
+          }))
       }
     }
     delete route.route.legs
     delete route.route.locations
     delete route.route.options
     delete route.info
-    route.cityRoute = cityRoute
+    const parsedArray =Array.from(cityRoute).map(jsonString => JSON.parse(jsonString));
+    route.cityRoute = splitRoute(parsedArray)
     res.json({
       status: 200,
       message: "OK",
@@ -62,5 +73,20 @@ function splitLocationsToQueryString(locations) {
     result.push(queryString);
   }
   return result;
+}
+function splitRoute(cityRoute){
+  let result = []
+  const chunk = 7
+  if(cityRoute.length <= chunk)
+    return cityRoute
+  const size = Math.ceil(cityRoute.length / chunk)
+
+  let idx = 0
+  for(let i = 0; i< size; i++){
+    const splitCities = cityRoute.slice(idx, Math.ceil(cityRoute.length/size)+idx)
+    idx += Math.ceil(cityRoute.length/size)
+    result.push(splitCities)
+  } 
+  return result
 }
 export default Router;
