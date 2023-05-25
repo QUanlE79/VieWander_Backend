@@ -78,7 +78,7 @@ function splitRoute(cityRoute){
   let result = []
   const chunk = 7
   if(cityRoute.length <= chunk)
-    return cityRoute
+    return [cityRoute]
   const size = Math.ceil(cityRoute.length / chunk)
 
   let idx = 0
