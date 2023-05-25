@@ -26,16 +26,21 @@ Router.get("/:id", async (req, res) => {
     let result = await commentModel.find({ province_id: provinceId }).exec();
     const sum_rating = result.reduce((remider, currentCmt) => remider + currentCmt.rating, 0)
     const rating_average = (sum_rating / result.length).toFixed(1)
+    let resultUpdated = [];
+
     for (let comment of result) {
-      let user = await userModel.findOne({ _id: comment.author_id }).exec();
-      comment.name = user.name;
+      let user = await userModel.findById(comment.author_id).exec();
+      if (user) {
+        let commentWithAuthorName = { ...comment._doc, name: user.name };
+        resultUpdated.push(commentWithAuthorName);
+      }
     }
     console.log('result', result)
     res.json({
       code: "200",
       message: "OK",
       data: {
-        comments: result, rating_average
+        comments: resultUpdated, rating_average
       }
     });
   } catch (error) {
