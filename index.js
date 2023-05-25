@@ -25,8 +25,8 @@ try {
   process.exit(-1)
 }
 app.use(morgan('dev'))
-app.use(bodyParser.json({ limit: '30mb', extended: true }))
-app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
+app.use(bodyParser.json({ limit: '100mb', extended: true }))
+app.use(bodyParser.urlencoded({ limit: '100mb', extended: true }))
 app.use(express.static('public'))
 app.use('/images', express.static('images'))
 app.use(cors())
