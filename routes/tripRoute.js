@@ -79,8 +79,8 @@ function splitLocationsToQueryString(locations) {
 function splitRoute(cityRoute) {
   let result = []
   const chunk = 7
-  if (cityRoute.length <= chunk)
-    return cityRoute
+  if(cityRoute.length <= chunk)
+    return [cityRoute]
   const size = Math.ceil(cityRoute.length / chunk)
 
   let idx = 0
