@@ -3,6 +3,18 @@ import express from 'express'
 
 const Router = express.Router();
 
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "public/images/posts")
+    },
+    filename: function (req, file, cb) {
+        const uniqueFileName = Date.now() + '-' + req.body.author_id + ".jpeg";
+        cb(null, uniqueFileName)
+        req.body.image = uniqueFileName
+    }
+})
+const upload = multer({ storage: storage })
+
 Router.get("/total",async (req,res)=>{
     try{
         const result = await postModel.count({}).exec()
@@ -54,7 +66,7 @@ Router.get("/:id", async (req, res) => {
     }
 });
 
-Router.post("/add",async (req,res)=>{
+Router.post("/add",upload.single('image'),async (req,res)=>{
     try{
         const newPost = new postModel(req.body)      
         const result = await newPost.save()

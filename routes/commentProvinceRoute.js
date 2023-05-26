@@ -22,7 +22,15 @@ Router.get("/count",async (req,res)=>{
 Router.get("/:id", async (req, res) => {
     try {
         const landmark_id = req.params.id
-        const result = await commentModel.find({landmark_id: landmark_id}).exec();
+        const result = await commentModel.find({province_id: landmark_id}).exec();
+
+        const modifiedResult = result.map(doc => {
+          const modifiedDoc = { ...doc.toObject() };
+          modifiedDoc.name = "GPT"; // Add the desired property
+          return modifiedDoc;
+        });
+
+        console.log(modifiedResult)
         res.json({
           code: "200",
           message: "OK",
