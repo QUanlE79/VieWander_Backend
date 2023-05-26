@@ -1,4 +1,5 @@
 import postModel from "../model/postSchema.js";
+import commentModel from "../model/comment_postChema.js";
 import express from 'express'
 import multer from "multer";
 const Router = express.Router();
@@ -34,7 +35,25 @@ Router.get("/total",async (req,res)=>{
 
 Router.get("/", async (req, res) => {
     try {
-      const result = await postModel.find({}).exec();
+        const allPosts = await postModel.find({}).exec();
+        let allPostsWithComment = []
+        for (let post of allPosts){
+            let comments = await commentModel.find({ post_id: post._id }).exec();
+            let postUpdated = []
+            for (let comment of comments) {
+              let user = await userModel.findById(comment.author_id).exec();
+              if (user) {
+                let commentWithAuthorName = { ...comment._doc, name: user.name };
+                postUpdated.push(commentWithAuthorName);
+              }
+            }
+            allPostsWithComment.push(postUpdated)
+        }
+        res.json({
+        status: "200",
+          message: "OK",
+          data: allPostsWithComment
+        });
       res.json({
         status: "200",
         message: "OK",
@@ -66,7 +85,7 @@ Router.get("/:id", async (req, res) => {
     }
 });
 
-Router.post("/add",upload.single('image'),async (req,res)=>{
+Router.post("/create",upload.single('image'),async (req,res)=>{
     try{
         const newPost = new postModel(req.body)      
         const result = await newPost.save()
@@ -84,7 +103,7 @@ Router.post("/add",upload.single('image'),async (req,res)=>{
     }
 })
 
-Router.post("/edit",async (req,res, next)=>{ //...?id=
+Router.post("/update",async (req,res, next)=>{ //...?id=
     try{
         const id = req.query.id;
         const post = await postModel.findById(id);
@@ -127,6 +146,59 @@ Router.post("/delete",async (req,res)=>{
             data: deletedPost
         });
     }catch(ex){
+        console.log(ex);
+        res.json({
+            status: "400",
+            message: ex.toString()
+        });
+    }
+})
+
+Router.post("/like/:id", async(req,res)=>{
+    try {
+        const post_id = req.params.id
+        const author_id = req.body.author_id
+        if (author_id == undefined){
+            console.log(ex);
+            res.json({
+                status: "403",
+                message: "Forbidden"
+            });
+            next()
+        }
+        const result = await postModel.updateOne({ _id: post_id }, { $inc: { num_of_like: 1 } });
+        res.json({
+            status: "200",
+            message: "OK",
+            data: result
+        });
+    } catch (ex) {
+        console.log(ex);
+        res.json({
+            status: "400",
+            message: ex.toString()
+        });
+    }
+})
+Router.post("/dislike/:id", async(req,res)=>{
+    try {
+        const post_id = req.params.id
+        const author_id = req.body.author_id
+        if (author_id == undefined){
+            console.log(ex);
+            res.json({
+                status: "403",
+                message: "Forbidden"
+            });
+            next()
+        }
+        const result = await postModel.updateOne({ _id: post_id }, { $dec: { num_of_like: 1 } });
+        res.json({
+            status: "200",
+            message: "OK",
+            data: result
+        });
+    } catch (ex) {
         console.log(ex);
         res.json({
             status: "400",

@@ -23,10 +23,22 @@ Router.get("/:id", async (req, res) => {
     try {
         const landmark_id = req.params.id
         const result = await commentModel.find({landmark_id: landmark_id}).exec();
+        const sum_rating = result.reduce((remider, currentCmt) => remider + currentCmt.rating, 0)
+        const rating_average = (sum_rating / result.length).toFixed(1)
+        let resultUpdated = [];
+        for (let comment of result) {
+          let user = await userModel.findById(comment.author_id).exec();
+          if (user) {
+            let commentWithAuthorName = { ...comment._doc, name: user.name };
+            resultUpdated.push(commentWithAuthorName);
+          }
+        }
         res.json({
           code: "200",
           message: "OK",
-          data: result
+          data: {
+            comments: resultUpdated, rating_average
+          }
         });
     } catch (error) {
       console.log(error);
