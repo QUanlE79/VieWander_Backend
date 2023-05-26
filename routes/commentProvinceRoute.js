@@ -35,7 +35,6 @@ Router.get("/:id", async (req, res) => {
         resultUpdated.push(commentWithAuthorName);
       }
     }
-    console.log('result', result)
     res.json({
       code: "200",
       message: "OK",
