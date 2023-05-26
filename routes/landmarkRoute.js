@@ -3,6 +3,7 @@ import express from 'express'
 import multer from 'multer'
 import path from 'path'
 import fs from 'fs'
+import provinceModel from "../model/provincesSchema.js";
 const Router = express.Router();
 
 Router.get("/count",async (req,res)=>{
@@ -58,6 +59,24 @@ Router.post('/search', async (req, res) => {
 Router.get("/:id", async (req, res) => {
     try {
       const result = await landmarkModel.find({_id: req.params.id}).exec();
+      res.json({
+        code: "200",
+        message: "OK",
+        data: result
+      });
+    } catch (error) {
+      console.log(error);
+      res.json({
+        code: "404",
+        message: "NOT FOUND"
+      });
+    }
+});
+Router.get("/:province-name", async (req, res) => {
+    try {
+        const name = req.params.province-name
+        const province = await provinceModel.findOne({name: name},`_id name`).exec();
+      const result = await landmarkModel.find({province_id: province}).exec();
       res.json({
         code: "200",
         message: "OK",
