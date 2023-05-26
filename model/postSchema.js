@@ -9,6 +9,9 @@ const Post = new Schema({
     content: {
         type: String
     },
+    image:{
+        type: String
+    },
     date_post:{
         type: Number,
         default: Date.now()
