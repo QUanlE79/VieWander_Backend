@@ -6,15 +6,15 @@ import fs from 'fs'
 import provinceModel from "../model/provincesSchema.js";
 const Router = express.Router();
 
-Router.get("/count",async (req,res)=>{
-    try{
+Router.get("/count", async (req, res) => {
+    try {
         const result = await landmarkModel.count({}).exec()
         res.json({
             code: "200",
             message: "OK",
             data: result
         });
-    }catch(er){
+    } catch (er) {
         console.log(er)
         res.json({
             code: "400",
@@ -24,18 +24,36 @@ Router.get("/count",async (req,res)=>{
 })
 Router.get("/", async (req, res) => {
     try {
-      const result = await landmarkModel.find({},`_id name`).exec();
-      res.json({
-        code: "200",
-        message: "OK",
-        data: result
-      });
+        const result = await landmarkModel.find({}, `_id name`).exec();
+        res.json({
+            code: "200",
+            message: "OK",
+            data: result
+        });
     } catch (error) {
-      console.log(error);
-      res.json({
-        code: "404",
-        message: "NOT FOUND"
-      });
+        console.log(error);
+        res.json({
+            code: "404",
+            message: "NOT FOUND"
+        });
+    }
+});
+Router.get("/getAll", async (req, res) => {
+    const typeId = req.query.type
+    console.log(typeId)
+    try {
+        const result = await landmarkModel.find({ type: typeId }).exec();
+        res.json({
+            code: "200",
+            message: "OK",
+            data: result
+        });
+    } catch (error) {
+        console.log(error);
+        res.json({
+            code: "404",
+            message: "NOT FOUND"
+        });
     }
 });
 Router.post('/search', async (req, res) => {
@@ -58,36 +76,47 @@ Router.post('/search', async (req, res) => {
 });
 Router.get("/:id", async (req, res) => {
     try {
-      const result = await landmarkModel.find({_id: req.params.id}).exec();
-      res.json({
-        code: "200",
-        message: "OK",
-        data: result
-      });
+        const result = await landmarkModel.find({ _id: req.params.id }).exec();
+        res.json({
+            code: "200",
+            message: "OK",
+            data: result[0]
+        });
     } catch (error) {
-      console.log(error);
-      res.json({
-        code: "404",
-        message: "NOT FOUND"
-      });
+        console.log(error);
+        res.json({
+            code: "404",
+            message: "NOT FOUND"
+        });
     }
 });
-Router.get("/:province-name", async (req, res) => {
+Router.post("/route", async (req, res) => {
+    const { typeId, provinceArr } = req.body;
+    console.log(provinceArr)
+    console.log(typeId)
+    let result = [];
     try {
-        const name = req.params.province-name
-        const province = await provinceModel.findOne({name: name},`_id name`).exec();
-      const result = await landmarkModel.find({province_id: province}).exec();
-      res.json({
-        code: "200",
-        message: "OK",
-        data: result
-      });
+        for (const province of provinceArr) {
+            const provinceResult = await provinceModel.findOne({ name: province }, `_id name`).exec();
+
+            if (typeId) {
+                const resLandmark = await landmarkModel.find({ type: typeId, province_id: provinceResult._id }).exec();
+                result.push(...resLandmark);
+            }
+        }
+
+
+        res.json({
+            code: "200",
+            message: "OK",
+            data: result,
+        });
     } catch (error) {
-      console.log(error);
-      res.json({
-        code: "404",
-        message: "NOT FOUND"
-      });
+        console.log(error);
+        res.json({
+            code: "404",
+            message: "NOT FOUND",
+        });
     }
 });
 const storage = multer.diskStorage({
@@ -96,7 +125,7 @@ const storage = multer.diskStorage({
     },
 })
 const upload = multer({ storage: storage })
-Router.post("/create",upload.any('images'),async (req,res)=>{
+Router.post("/create", upload.any('images'), async (req, res) => {
     try {
         const imageList = []
         req.files.forEach(async (image, index) => {
@@ -124,8 +153,8 @@ Router.post("/create",upload.any('images'),async (req,res)=>{
         });
     }
 })
-Router.post("/update",async (req,res, next)=>{ //...?id=
-    try{
+Router.post("/update", async (req, res, next) => { //...?id=
+    try {
         const id = req.query.id;
         const landmark = await landmarkModel.findById(id);
         if (!landmark) {
@@ -142,7 +171,7 @@ Router.post("/update",async (req,res, next)=>{ //...?id=
             message: "OK",
             data: result
         });
-    }catch(ex){
+    } catch (ex) {
         console.log(ex);
         res.json({
             code: "400",
@@ -150,8 +179,8 @@ Router.post("/update",async (req,res, next)=>{ //...?id=
         });
     }
 })
-Router.post("/delete",async (req,res)=>{
-    try{
+Router.post("/delete", async (req, res) => {
+    try {
         const id = req.query.id;
         const deletedLandmark = await productModel.findOneAndDelete({ _id: id });
         if (!deletedLandmark) {
@@ -166,7 +195,7 @@ Router.post("/delete",async (req,res)=>{
             message: "OK",
             data: deletedLandmark
         });
-    }catch(ex){
+    } catch (ex) {
         console.log(ex);
         res.json({
             code: "400",
