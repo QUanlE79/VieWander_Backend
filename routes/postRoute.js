@@ -1,6 +1,6 @@
 import postModel from "../model/postSchema.js";
 import express from 'express'
-
+import multer from "multer";
 const Router = express.Router();
 
 const storage = multer.diskStorage({
