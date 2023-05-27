@@ -1,7 +1,8 @@
 import express from 'express'
 import authMiddleware from '../middleware/authMiddleware.js';
 import userModel from '../model/userSchema.js';
-
+import multer from 'multer'
+import fs from 'fs'
 const Router = express.Router();
 Router.get('/getAll', async (req, res) => {
     try {
@@ -13,6 +14,55 @@ Router.get('/getAll', async (req, res) => {
         res.status(200).json(users)
     } catch (error) {
         res.status(500).json(error)
+    }
+})
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, "public/images/profile")
+    },
+})
+const upload = multer({ storage: storage })
+Router.put('/:id', upload.any('avatar'), authMiddleware, async (req, res) => {
+    const imageList = []
+    req.files.forEach(async (image, index) => {
+        let fileType = image.mimetype.split("/")[1];
+        let imgName = req.body.name.trim() + Date.now() + "." + fileType;
+        imageList.push(imgName)
+        await fs.renameSync(
+            `./public/images/profile/${image.filename}`,
+            `./public/images/profile/${imgName}`,
+        );
+    })
+    const id = req.params.id;
+    const { _id } = req.body;
+    console.log(req.body)
+    console.log(id)
+    console.log('_id', _id)
+    if (id === _id) {
+        try {
+
+            const user = await userModel.findByIdAndUpdate(id, { ...req.body, avatar: imageList[0] }, { upsert: true, new: true });
+            console.log(user)
+            res.status(200).json({ user })
+        } catch (error) {
+            res.status(500).json(error);
+        }
+    } else {
+        res.status(403).json("Access Denied! you can only update your own profile")
+    }
+})
+Router.get('/:id', async (req, res) => {
+    const id = req.params.id;
+    try {
+        const user = await UserModel.findById(id)
+        if (user) {
+            const { password, ...otherDetails } = user._doc
+            res.status(200).json(otherDetails)
+        } else {
+            res.status(404).json("No such user exists")
+        }
+    } catch (error) {
+        res.status(500).json(error);
     }
 })
 Router.put('/follow/:id', authMiddleware, async (req, res) => {

@@ -73,7 +73,7 @@ Router.get("/", async (req, res) => {
 Router.get("/:id/timeline", async (req, res) => {
     const userId = req.params.id
     try {
-        const currentUserPosts = await postModel.find({ author_id: userId })
+        const currentUserPosts = await postModel.find({ author_id: userId }).lean()
         const followingPosts = await userModel.aggregate([
             {
                 $match: {
@@ -101,7 +101,7 @@ Router.get("/:id/timeline", async (req, res) => {
         console.log(result)
         for (let post of result) {
             let user = await userModel.findById(post.author_id).exec();
-            console.log(post)
+
             if (user) {
                 let postWithAuthorName = { ...post, name: user.name };
                 resultUpdated.push(postWithAuthorName);
@@ -129,12 +129,8 @@ Router.put('/like/:id', async (req, res) => {
     try {
         const post = await postModel.findById(id)
 
-
-        if (!post.likes) {
-            await post.updateOne({ $set: { likes: [userId] } })
-        }
-
         if (!post.likes.includes(userId)) {
+
             await post.updateOne({ $push: { likes: userId } })
             res.status(200).json("Post liked")
         } else {

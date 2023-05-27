@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const User = new Schema({
     email: {
         type: String,
-        required : true
+        required: true
     },
     password: {
         type: String,
@@ -13,42 +13,42 @@ const User = new Schema({
         type: String,
     },
     name: {
-        type: String,              
+        type: String,
         required: true,
     },
     avatar: {
         type: String
     },
-    cover:{
+    cover: {
         type: String
     },
-    job:{
+    job: {
         type: String
     },
-    dob:{
-        type: Number
-    },
-    gender:{
+    dob: {
         type: String
     },
-    address:{
-        type:String
+    gender: {
+        type: String
+    },
+    address: {
+        type: String
     },
     contact: {
         type: String
     },
-    favorite_landmark:{
+    favorite_landmark: {
         type: [String]
     },
-    follower:{
+    follower: {
         type: [String]
     },
-    follow:{
+    follow: {
         type: [String]
     },
-    role:{
+    role: {
         type: Number
     }
 });
-let userModel = mongoose.model('users', User,"users");
+let userModel = mongoose.model('users', User, "users");
 export default userModel
