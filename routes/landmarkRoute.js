@@ -119,6 +119,32 @@ Router.post("/route", async (req, res) => {
         });
     }
 });
+Router.post("/favourite", async (req, res) => {
+    const { landmarkIdArr } = req.body;
+
+    let result = [];
+    try {
+        for (const landmarkId of landmarkIdArr) {
+
+            const resLandmark = await landmarkModel.find({ _id: landmarkId }).exec();
+            console.log(resLandmark)
+            result.push(...resLandmark);
+        }
+
+
+        res.json({
+            code: "200",
+            message: "OK",
+            data: result,
+        });
+    } catch (error) {
+        console.log(error);
+        res.json({
+            code: "404",
+            message: "NOT FOUND",
+        });
+    }
+});
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, "public/images/landmarks")
