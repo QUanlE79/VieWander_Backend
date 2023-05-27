@@ -25,7 +25,7 @@ Router.get("/:id", async (req, res) => {
     const provinceId = req.params.id
     let result = await commentModel.find({ province_id: provinceId }).exec();
     const sum_rating = result.reduce((remider, currentCmt) => remider + currentCmt.rating, 0)
-    const rating_average = (sum_rating / result.length).toFixed(1)
+    const rating_average = (sum_rating / result.length).toFixed(0)
     let resultUpdated = [];
 
     for (let comment of result) {
@@ -35,7 +35,6 @@ Router.get("/:id", async (req, res) => {
         resultUpdated.push(commentWithAuthorName);
       }
     }
-    console.log('result', result)
     res.json({
       code: "200",
       message: "OK",

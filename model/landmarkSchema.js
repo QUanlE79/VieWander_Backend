@@ -6,10 +6,11 @@ const Landmark = new Schema({
         type: String,
         required: true
     },
-    name: {type: String,              
-        required: true, 
+    name: {
+        type: String,
+        required: true,
     },
-    type: { //0: DLTC; 1: DTLS
+    type: {
         type: Number
     },
     address: {
@@ -29,21 +30,21 @@ const Landmark = new Schema({
     rating: {
         type: Number
     },
-    entrance_fee:{
+    entrance_fee: {
         type: String
     },
-    open_time:{
+    open_time: {
         type: String
     },
-    close_time:{
+    close_time: {
         type: String
     },
-    phone:{
-        type:String
+    phone: {
+        type: String
     },
-    website:{
-        type:String
+    website: {
+        type: String
     }
 });
-let landmarkModel = mongoose.model('landmarks', Landmark,"landmarks");
+let landmarkModel = mongoose.model('landmarks', Landmark, "landmarks");
 export default landmarkModel

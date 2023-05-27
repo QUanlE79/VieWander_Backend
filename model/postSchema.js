@@ -3,25 +3,25 @@ const { Schema } = mongoose;
 
 const Post = new Schema({
     author_id: {
-        type: String,              
-        required: true, 
+        type: String,
+        required: true,
     },
     content: {
         type: String
     },
-    image:{
+    image: {
         type: String
     },
-    date_post:{
+    date_post: {
         type: Number,
         default: Date.now()
     },
-    num_of_like:{
-        type: Number
+    likes: {
+        type: [String]
     },
-    view_mode:{
+    view_mode: {
         type: String
     }
 });
-let postModel = mongoose.model('posts', Post,"posts");
+let postModel = mongoose.model('posts', Post, "posts");
 export default postModel
