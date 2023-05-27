@@ -92,8 +92,7 @@ Router.get("/:id", async (req, res) => {
 });
 Router.post("/route", async (req, res) => {
     const { typeId, provinceArr } = req.body;
-    console.log(provinceArr)
-    console.log(typeId)
+
     let result = [];
     try {
         for (const province of provinceArr) {

@@ -3,8 +3,7 @@ import axios from 'axios';
 const Router = express.Router();
 const mapQuestKey = `VvlIGiR1ZuvZDNIUbVoxM4aL3wHwcfIc`
 Router.get("/", async (req, res) => {
-  console.log(req.query.start)
-  console.log(req.query.end)
+
   if (!req.query.start || !req.query.end || req.query.start.length == 0 || req.query.end.length == 0) {
     return res.json({
       status: 404,
@@ -79,7 +78,7 @@ function splitLocationsToQueryString(locations) {
 function splitRoute(cityRoute) {
   let result = []
   const chunk = 7
-  if(cityRoute.length <= chunk)
+  if (cityRoute.length <= chunk)
     return [cityRoute]
   const size = Math.ceil(cityRoute.length / chunk)
 

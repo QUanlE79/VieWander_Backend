@@ -30,16 +30,17 @@ app.use(bodyParser.urlencoded({ limit: '30mb', extended: true }))
 app.use("/public", express.static("public"));
 app.use(cors())
 
-app.use((req, res, next) => {
-  const token = req.headers['authorization'];
-  jwt.verify(token, 'etwda2023', function (err, decoded) {
-    if (!err) {
-      console.log(`Logged as ${decoded.email}`)
-      res.locals.auth = decoded
-    }
-  });
-  next()
-})
+// app.use((req, res, next) => {
+//   const token = req.headers['authorization'];
+//   jwt.verify(token, 'etwda2023', function (err, decoded) {
+//     if (!err) {
+//       console.log(`Logged as ${decoded.email}`)
+//       res.locals.auth = decoded
+//       console.log(decoded)
+//     }
+//   });
+//   next()
+// })
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })

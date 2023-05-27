@@ -98,14 +98,17 @@ Router.get("/:id/timeline", async (req, res) => {
         let result = currentUserPosts.concat(...followingPosts[0].followingPosts).sort((a, b) => {
             return new Date(b.date_post) - new Date(a.date_post)
         })
+        console.log(result)
         for (let post of result) {
             let user = await userModel.findById(post.author_id).exec();
+            console.log(post)
             if (user) {
-                let postWithAuthorName = { ...post._doc, name: user.name };
+                let postWithAuthorName = { ...post, name: user.name };
                 resultUpdated.push(postWithAuthorName);
             }
         }
         console.log(resultUpdated)
+
         res.json({
             status: "200",
             message: "OK",
@@ -119,6 +122,29 @@ Router.get("/:id/timeline", async (req, res) => {
         });
     }
 });
+Router.put('/like/:id', async (req, res) => {
+    const id = req.params.id
+    const { userId } = req.body
+
+    try {
+        const post = await postModel.findById(id)
+
+
+        if (!post.likes) {
+            await post.updateOne({ $set: { likes: [userId] } })
+        }
+
+        if (!post.likes.includes(userId)) {
+            await post.updateOne({ $push: { likes: userId } })
+            res.status(200).json("Post liked")
+        } else {
+            await post.updateOne({ $pull: { likes: userId } })
+            res.status(200).json("Post unLiked")
+        }
+    } catch (error) {
+        res.status(500).json(error)
+    }
+})
 
 Router.post("/add", upload.single('image'), async (req, res) => {
     try {
