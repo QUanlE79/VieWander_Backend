@@ -3,6 +3,8 @@ import authMiddleware from '../middleware/authMiddleware.js';
 import userModel from '../model/userSchema.js';
 import multer from 'multer'
 import fs from 'fs'
+import landmarkModel from '../model/landmarkSchema.js';
+
 const Router = express.Router();
 Router.get('/getAll', async (req, res) => {
     try {
@@ -100,6 +102,48 @@ Router.put('/unfollow/:id', authMiddleware, async (req, res) => {
             res.status(200).json("User Unfollowed")
         } else {
             res.status(403).json("User is not followed by you")
+        }
+
+    } catch (error) {
+        res.status(500).json(error)
+    }
+
+})
+Router.put('/favourite/:id', authMiddleware, async (req, res) => {
+    const id = req.params.id;
+
+    const { _id } = req.body;
+
+
+    try {
+
+        const user = await userModel.findById(_id)
+        if (!user.favorite_landmark.includes(id)) {
+            await user.updateOne({ $push: { favorite_landmark: id } })
+
+            res.status(200).json("Landmark followed")
+        } else {
+            res.status(403).json("Landmark is Already followed by you")
+        }
+
+    } catch (error) {
+        res.status(500).json(error)
+    }
+
+})
+Router.put('/favourite/:id', authMiddleware, async (req, res) => {
+    const id = req.params.id;
+    const { _id } = req.body;
+
+    try {
+
+        const user = await userModel.findById(_id)
+        if (user.favorite_landmark.includes(id)) {
+            await user.updateOne({ $pull: { favorite_landmark: id } })
+
+            res.status(200).json("Landmark unfollowed")
+        } else {
+            res.status(403).json("Landmark is not Already followed by you")
         }
 
     } catch (error) {
