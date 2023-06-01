@@ -47,7 +47,14 @@ Router.get("/", async (req, res) => {
   cityRoute = await Promise.all(Array.from(cityRoute).map(async (jsonString) =>  {
     let cityObj = JSON.parse(jsonString)
     const cityName = cityObj.label
+    console.log(cityName)
     const province = await provinceModel.findOne({name: cityName}).exec()  
+    if(!province)
+      return {
+        _id: "",
+        label: cityName,
+        image: "image"
+      }
     return {
       _id: province._id,
       label: cityName,
