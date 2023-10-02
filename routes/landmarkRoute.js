@@ -40,7 +40,7 @@ Router.get("/", async (req, res) => {
 });
 Router.get("/getAll", async (req, res) => {
     const typeId = req.query.type
-    console.log(typeId)
+
     try {
         const result = await landmarkModel.find({ type: typeId }).exec();
         res.json({
@@ -97,16 +97,16 @@ Router.post("/route", async (req, res) => {
     try {
         for (const province of provinceArr) {
             const provinceResult = await provinceModel.findOne({ name: province }, `_id name`).exec();
-        
+
 
             if (typeId) {
                 const resLandmark = await landmarkModel.find({ type: typeId, province_id: provinceResult._id }).exec();
-               
+
                 result.push(...resLandmark);
             }
         }
 
-        
+
         res.json({
             code: "200",
             message: "OK",
@@ -128,7 +128,7 @@ Router.post("/favourite", async (req, res) => {
         for (const landmarkId of landmarkIdArr) {
 
             const resLandmark = await landmarkModel.find({ _id: landmarkId }).exec();
-            console.log(resLandmark)
+
             result.push(...resLandmark);
         }
 

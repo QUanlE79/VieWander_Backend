@@ -98,7 +98,7 @@ Router.get("/:id/timeline", async (req, res) => {
         let result = currentUserPosts.concat(...followingPosts[0].followingPosts).sort((a, b) => {
             return new Date(b.date_post) - new Date(a.date_post)
         })
-        console.log(result)
+
         for (let post of result) {
             let user = await userModel.findById(post.author_id).exec();
 
@@ -107,7 +107,7 @@ Router.get("/:id/timeline", async (req, res) => {
                 resultUpdated.push(postWithAuthorName);
             }
         }
-        console.log(resultUpdated)
+
 
         res.json({
             status: "200",

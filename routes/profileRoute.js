@@ -37,14 +37,12 @@ Router.put('/:id', upload.any('avatar'), authMiddleware, async (req, res) => {
     })
     const id = req.params.id;
     const { _id } = req.body;
-    console.log(req.body)
-    console.log(id)
-    console.log('_id', _id)
+
     if (id === _id) {
         try {
 
             const user = await userModel.findByIdAndUpdate(id, { ...req.body, avatar: imageList[0] }, { upsert: true, new: true });
-            console.log(user)
+
             res.status(200).json({ user })
         } catch (error) {
             res.status(500).json(error);

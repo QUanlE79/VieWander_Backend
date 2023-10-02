@@ -53,7 +53,7 @@ Router.post("/create", async (req, res) => {
     const newComment = new commentModel(req.body)
     try {
         const savedComment = await newComment.save()
-        console.log(savedComment)
+
         return res.json({
             status: 200,
             message: "Comment saved successfully",

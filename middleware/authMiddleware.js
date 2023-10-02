@@ -9,7 +9,7 @@ const authMiddleware = async (req, res, next) => {
 
         if (token) {
             const decoded = jwt.verify(token, "etwda2023")
-            console.log(decoded?.id)
+
             req.body._id = decoded?.id
         }
         next()
