@@ -2,7 +2,7 @@ import express from 'express'
 import axios from 'axios';
 import provinceModel from '../model/provincesSchema.js';
 const Router = express.Router();
-const mapQuestKey = `katuJRuVhAynPiGZBk2s6EWp2zgExq14`
+const mapQuestKey = `q404Ij1K1oxzctM1ns7vOdqAqTxe8wkG`
 Router.get("/", async (req, res) => {
 
   if (!req.query.start || !req.query.end || req.query.start.length == 0 || req.query.end.length == 0) {
@@ -44,11 +44,11 @@ Router.get("/", async (req, res) => {
         }))
     }
   }
-  cityRoute = await Promise.all(Array.from(cityRoute).map(async (jsonString) =>  {
+  cityRoute = await Promise.all(Array.from(cityRoute).map(async (jsonString) => {
     let cityObj = JSON.parse(jsonString)
     const cityName = cityObj.label
-    const province = await provinceModel.findOne({name: cityName}).exec()  
-    if(!province)
+    const province = await provinceModel.findOne({ name: cityName }).exec()
+    if (!province)
       return {
         _id: "",
         label: cityName,
